@@ -1,22 +1,47 @@
-import fastify from "fastify";
 import cors from "@fastify/cors";
-import { prisma } from "./lib/prisma";
-import { createTrip } from "./routes/create-trip";
+import fastify from "fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+
+import { env } from "./env";
+import { errorHandler } from "./error-handler";
 import { confirmTrip } from "./routes/confirm-trip";
+import { confirmParticipant } from "./routes/confirm-participant";
+import { createActivity } from "./routes/create-activity";
+import { createInvite } from "./routes/create-invite";
+import { createLink } from "./routes/create-link";
+import { createTrip } from "./routes/create-trip";
+import { getActivities } from "./routes/get-activities";
+import { getLinks } from "./routes/get-links";
+import { getParticipant } from "./routes/get-participant";
+import { getParticipants } from "./routes/get-participants";
+import { getTripDetails } from "./routes/get-trip-details";
+import { updateTrip } from "./routes/update-trip";
 
 const app = fastify();
 
 app.register(cors, {
-    origin: '*'
-})
+    origin: "http://localhost:3000"
+});
 
+// Add schema validator and serializer
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-app.register(confirmTrip);
-app.register(createTrip);
+app.setErrorHandler(errorHandler);
 
-app.listen({ port: 3001 }).then(() => {
-    console.log("Server started on port 3001");
-});
+app.register(createTrip);
+app.register(confirmTrip);
+app.register(confirmParticipant);
+app.register(createActivity);
+app.register(getActivities);
+app.register(createLink);
+app.register(getLinks);
+app.register(getParticipants);
+app.register(createInvite);
+app.register(updateTrip);
+app.register(getTripDetails);
+app.register(getParticipant);
+
+app.listen({
+    port: env.PORT
+}).then(() => console.log(`Server running on port ${env.PORT}`));
