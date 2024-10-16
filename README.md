@@ -1,12 +1,3 @@
-# Vou criar o conteúdo formatado dentro de um arquivo Bash que você poderá executar para gerar o arquivo corretamente em Markdown.
-
-bash_script_content = """
-#!/bin/bash
-
-# Criação do arquivo README.md com o conteúdo formatado
-
-cat << 'EOF' > README.md
-
 # Plann.er API
 
 Esta é a API da aplicação **Plann.er**, um sistema de planejamento de viagens. Através dele, você pode montar planos de viagens com amigos, registrar atividades, adicionar links úteis sobre a viagem, entre diversas outras funcionalidades.
