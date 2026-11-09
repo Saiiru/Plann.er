@@ -3,9 +3,10 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { ClientError } from "../errors/client-error";
 import { dayjs } from "../lib/dayjs";
-import { prisma } from "../lib/prisma";
+import { dateTime } from "../lib/validation";
 
 export async function createActivity(app: FastifyInstance) {
+    const prisma = app.prisma;
     app.withTypeProvider<ZodTypeProvider>().post(
         "/trips/:tripId/activities",
         {
@@ -14,8 +15,8 @@ export async function createActivity(app: FastifyInstance) {
                     tripId: z.string().uuid()
                 }),
                 body: z.object({
-                    title: z.string().min(4),
-                    occurs_at: z.coerce.date()
+                    title: z.string().trim().min(4).max(200),
+                    occurs_at: dateTime
                 })
             }
         },
@@ -23,30 +24,32 @@ export async function createActivity(app: FastifyInstance) {
             const { tripId } = req.params;
             const { title, occurs_at } = req.body;
 
-            const trip = await prisma.trip.findUnique({
-                where: {
-                    id: tripId
+            const activity = await prisma.$transaction(async (tx) => {
+                const trip = await tx.trip.findUnique({
+                    where: {
+                        id: tripId
+                    }
+                });
+
+                if (!trip) {
+                    throw new ClientError("Trip not found", 404, "NOT_FOUND");
                 }
-            });
 
-            if (!trip) {
-                throw new ClientError("Trip not found");
-            }
-
-            if (dayjs(occurs_at).isBefore(trip.starts_at)) {
-                throw new ClientError("Invalid activity date");
-            }
-
-            if (dayjs(occurs_at).isAfter(trip.ends_at)) {
-                throw new ClientError("Invalid activity date");
-            }
-
-            const activity = await prisma.activity.create({
-                data: {
-                    title,
-                    occurs_at,
-                    trip_id: tripId
+                if (dayjs(occurs_at).isBefore(trip.starts_at)) {
+                    throw new ClientError("Invalid activity date");
                 }
+
+                if (dayjs(occurs_at).isAfter(trip.ends_at)) {
+                    throw new ClientError("Invalid activity date");
+                }
+
+                return tx.activity.create({
+                    data: {
+                        title,
+                        occurs_at,
+                        trip_id: tripId
+                    }
+                });
             });
 
             return reply.status(201).send({ activityId: activity.id });

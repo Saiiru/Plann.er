@@ -2,9 +2,10 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { ClientError } from "../errors/client-error";
-import { prisma } from "../lib/prisma";
+import { isHttpUrl } from "../lib/validation";
 
 export async function createLink(app: FastifyInstance) {
+    const prisma = app.prisma;
     app.withTypeProvider<ZodTypeProvider>().post(
         "/trips/:tripId/links",
         {
@@ -13,8 +14,12 @@ export async function createLink(app: FastifyInstance) {
                     tripId: z.string().uuid()
                 }),
                 body: z.object({
-                    title: z.string().min(4),
-                    url: z.string().url()
+                    title: z.string().trim().min(4).max(200),
+                    url: z
+                        .string()
+                        .url()
+                        .max(2048)
+                        .refine(isHttpUrl, "Use an HTTP(S) URL")
                 })
             }
         },
@@ -27,7 +32,7 @@ export async function createLink(app: FastifyInstance) {
             });
 
             if (!trip) {
-                throw new ClientError("Trip not found");
+                throw new ClientError("Trip not found", 404, "NOT_FOUND");
             }
 
             const link = await prisma.link.create({

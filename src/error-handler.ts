@@ -1,49 +1,17 @@
-import { FastifyInstance } from "fastify";
+import { FastifyError, FastifyRequest, FastifyReply } from "fastify";
 import { ZodError } from "zod";
-import * as clientError from "./errors/client-error";
-import * as fastifyError from "fastify-error";
-
-type FastifyErrorHandler = FastifyInstance["errorHandler"];
-
-const logError = (error: Error, req: FastifyInstance["Request"]) => {
-    req.log.error({
-        message: error.message,
-        stack: error.stack
-    });
-};
-
-const handleZodError = (error: ZodError, reply: FastifyInstance["Reply"]) => {
-    reply.status(400).send({
-        message: "Invalid input",
-        errors: error.flatten().fieldErrors
-    });
-};
-
-const handleClientError = (error: clientError.ClientError, reply: FastifyInstance["Reply"]) => {
-    reply.status(400).send({
-        message: error.message,
-        code: error.code || "CLIENT_ERROR"
-    });
-};
-
-export const errorHandler: FastifyErrorHandler = (error, req, reply) => {
-    if (error instanceof ZodError) {
-        return handleZodError(error, reply);
-    }
-
-    if (error instanceof clientError.ClientError) {
-        return handleClientError(error, reply);
-    }
-
-    if (error instanceof fastifyError.FastifyError) {
-        logError(error, req);
-        return reply.status(error.statusCode || 500).send({
-            message: error.message || "Internal server error"
-        });
-    }
-
-    logError(error, req);
-    return reply.status(500).send({
-        message: "Internal server error"
-    });
-};
+import { ClientError } from "./errors/client-error";
+import { Prisma } from "@prisma/client";
+export function errorHandler(error: unknown, req: FastifyRequest, reply: FastifyReply) {
+    if (error instanceof ZodError)
+        return reply.code(400).send({ message: "Invalid input", errors: error.flatten().fieldErrors });
+    if (error instanceof ClientError)
+        return reply.code(error.statusCode).send({ message: error.message, code: error.code });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002")
+        return reply.code(409).send({ message: "Participant already invited", code: "CONFLICT" });
+    const httpError = error instanceof Error ? (error as Partial<FastifyError>) : undefined;
+    if (httpError?.statusCode && httpError.statusCode >= 400 && httpError.statusCode < 500)
+        return reply.code(httpError.statusCode).send({ message: httpError.message });
+    req.log.error({ err: error });
+    return reply.code(500).send({ message: "Internal server error" });
+}

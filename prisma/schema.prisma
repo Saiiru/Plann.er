@@ -36,6 +36,7 @@ model Participant {
 
   trip Trip @relation(fields: [trip_id], references: [id])
 
+  @@unique([trip_id, email])
   @@map("participants")
 }
 
