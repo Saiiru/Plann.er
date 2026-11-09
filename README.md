@@ -1,369 +1,121 @@
 # Plann.er API
 
-Esta é a API da aplicação **Plann.er**, um sistema de planejamento de viagens. Através dele, você pode montar planos de viagens com amigos, registrar atividades, adicionar links úteis sobre a viagem, entre diversas outras funcionalidades.
+API educacional de planejamento de viagens, baseada no **NLW Journey**, da Rocketseat. Permite criar e confirmar viagens, confirmar participantes, registrar atividades e guardar links. Projeto de portfólio com execução local e testes de integração reais com SQLite.
 
-Essa aplicação foi desenvolvida durante o evento **NLW Journey** da **Rocketseat**, utilizando principalmente as tecnologias **Node**, **TypeScript** e **Fastify**.
+## Executar localmente
 
----
-
-## 🗒️ Índice
-
--   [Requisitos Funcionais](#requisitos-funcionais)
--   [Como executar](#como-executar)
--   [Rotas da API](#rotas-da-api)
--   [Tecnologias](#tecnologias)
--   [Agradecimentos](#agradecimentos)
-
----
-
-## 📌 Requisitos Funcionais
-
-### Cadastro de Viagem
-
--   O usuário informa o destino, data de início, data de término, e-mails dos convidados, nome completo e e-mail.
-
-### Confirmação de Viagem
-
--   O criador da viagem recebe um e-mail com um link para confirmar a nova viagem.
--   Ao clicar no link, a viagem é confirmada, os convidados recebem e-mails de confirmação e o criador é redirecionado para a página da viagem.
-
-### Confirmação de Convidado
-
--   O convidado é redirecionado para o aplicativo após clicar no link de confirmação.
--   O convidado deve informar seu nome (o e-mail já estará preenchido).
--   Após informar o nome, o convidado é confirmado na viagem.
-
-### Links Importantes da Viagem
-
--   Participantes podem adicionar links importantes da viagem, como reservas, lugares para visitar, etc.
-
-### Adição de Atividades
-
--   O idealizador e os convidados podem adicionar atividades, com título, data e horário.
-
-### Convite de Novos Participantes
-
--   Novos participantes podem ser convidados dentro da página do evento por e-mail e passam pelo fluxo de confirmação como os demais convidados.
-
----
-
-## 🎯 Como executar
-
-### 📝 Requisitos
-
-Antes de baixar o projeto, você vai precisar ter as seguintes ferramentas instaladas:
-
--   [Git](https://git-scm.com/)
--   [NodeJS](https://nodejs.org/en/)
--   [NPM](https://www.npmjs.com/), [PNPM](https://pnpm.io/) ou [Yarn](https://yarnpkg.com/)
-
-Também é recomendado ter um editor de código, como o [VSCode](https://code.visualstudio.com/). Para testar as rotas, você pode usar o [Postman](https://www.postman.com/).
-
-<!-- ## 🔗 Deploy
-
-O deploy da aplicação pode ser acessada através da seguinte URL base: https://pabloxt14-nlw-expert-notes.vercel.app/ -->
-
-## ⛕ Routes
-
-### Trips Routes
-
-#### POST `/trips`
-
-Cria uma nova viagem.
-
-##### Request body
-
-```json
-{
-    "destination": "São Paulo",
-    "starts_at": "2024-08-01 18:00:00",
-    "ends_at": "2024-08-04 18:00:0",
-    "owner_name": "John Doe",
-    "owner_email": "johndoe@gmail.com",
-    "emails_to_invite": ["pedrodoe@gmail.com", "marydoe@gmail.com", "sarahdoe@gmail.com"]
-}
-```
-
-##### Response body
-
-```json
-{
-    "tripId": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-}
-```
-
-#### GET `/trips/:tripId`
-
-Retorna os detalhes de uma viagem.
-
-##### Response body
-
-```json
-{
-    "trip": {
-        "id": "f944daf7-e7e6-47a2-b050-1556d6a9e963",
-        "destination": "Rio de Janeiro",
-        "starts_at": "2024-08-01T21:00:00.000Z",
-        "ends_at": "2024-08-04T21:00:00.000Z",
-        "is_confirmed": true
-    }
-}
-```
-
-#### PUT `/trips/:tripId`
-
-Altera uma viagem.
-
-##### Request body
-
-```json
-{
-    "destination": "Rio de Janeiro",
-    "starts_at": "2024-08-01 18:00:00",
-    "ends_at": "2024-08-04 18:00:0"
-}
-```
-
-##### Response body
-
-```json
-{
-    "tripId": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-}
-```
-
-#### GET `/trips/:tripId/confirm`
-
-Confirma uma viagem.
-
-### Participants Routes
-
-#### POST `/trips/:tripId/invites`
-
-Envia um convite a um participante para uma viagem.
-
-##### Request body
-
-```json
-{
-    "email": "johndoe3@gmail.com"
-}
-```
-
-##### Response body
-
-```json
-{
-    "participantId": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-}
-```
-
-#### GET `/trips/:tripId/participants`
-
-Retorna os participantes de uma viagem.
-
-##### Response body
-
-```json
-{
-    "participants": [
-        {
-            "id": "a91c91e1-8cca-4649-88e8-91cdf143df22",
-            "name": "John Doe",
-            "email": "johndoe@gmail.com",
-            "is_confirmed": true
-        },
-        {
-            "id": "dce0de32-421a-4512-9580-21c75648350d",
-            "name": null,
-            "email": "marydoe@gmail.com",
-            "is_confirmed": false
-        },
-        {
-            "id": "d673c4eb-f39a-4de4-8617-ef23b3707693",
-            "name": null,
-            "email": "pedro@gmail.com",
-            "is_confirmed": true
-        }
-    ]
-}
-```
-
-#### GET `/participants/:participantId`
-
-Retorna os detalhes de um participante.
-
-##### Response body
-
-```json
-{
-    "participant": {
-        "id": "a91c91e1-8cca-4649-88e8-91cdf143df22",
-        "name": "John Doe",
-        "email": "johndoe@gmail.com",
-        "is_confirmed": true
-    }
-}
-```
-
-#### GET `/participants/:participantId/confirm`
-
-Confirma um participante na viagem.
-
-### Activities Routes
-
-#### POST `/trips/:tripId/activities`
-
-Cria uma atividade em uma viagem.
-
-##### Request body
-
-```json
-{
-    "title": "Play",
-    "occurs_at": "2024-08-01 18:00:00"
-}
-```
-
-##### Response body
-
-```json
-{
-    "activityId": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-}
-```
-
-#### GET `/trips/:tripId/activities`
-
-Retorna as atividades de uma viagem.
-
-##### Response body
-
-```json
-{
-    "activities": [
-        {
-            "date": "2024-08-01T21:00:00.000Z",
-            "activities": [
-                {
-                    "id": "6e444c9e-11b8-4b95-b5ff-73288f3c0b5e",
-                    "title": "Play",
-                    "occurs_at": "2024-08-01T22:00:00.000Z",
-                    "trip_id": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-                }
-            ]
-        },
-        {
-            "date": "2024-08-02T21:00:00.000Z",
-            "activities": [
-                {
-                    "id": "6e444c9e-11b8-4b95-b5ff-73288f3c0b5e",
-                    "title": "Play",
-                    "occurs_at": "2024-08-02T22:00:00.000Z",
-                    "trip_id": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-                }
-            ]
-        }
-    ]
-}
-```
-
-### Links Routes
-
-#### POST `/trips/:tripId/links`
-
-Cria um link em uma viagem.
-
-##### Request body
-
-```json
-{
-    "title": "Website",
-    "url": "https://www.rocketseat.com.br"
-}
-```
-
-##### Response body
-
-```json
-{
-    "linkId": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-}
-```
-
-#### GET `/trips/:tripId/links`
-
-Retorna os links de uma viagem.
-
-##### Response body
-
-```json
-{
-    "links": [
-        {
-            "id": "f944daf7-e7e6-47a2-b050-1556d6a9e963",
-            "title": "Website",
-            "url": "https://www.rocketseat.com.br",
-            "trip_id": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-        },
-        {
-            "id": "f944daf7-e7e6-47a2-b050-1556d6a9e963",
-            "title": "Website 2",
-            "url": "https://www.rocketseat2.com.br",
-            "trip_id": "f944daf7-e7e6-47a2-b050-1556d6a9e963"
-        }
-    ]
-}
-```
-
-## ⚙ Setup
-
-### 📝 Requisites
-
-Antes de baixar o projeto você vai precisar ter instalado na sua máquina as seguintes ferramentas:
-
--   [Git](https://git-scm.com)
--   [NodeJS](https://nodejs.org/en/)
--   [NPM](https://www.npmjs.com/), [PNPM](https://pnpm.io/pt/) ou [Yarn](https://yarnpkg.com/)
-
-Além disto é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
-
-Para testar as rotas da aplicação você pode usar o cliente HTTP [Postman](https://www.postman.com/)
-
-### Cloning and Running
-
-Passo a passo para clonar e executar a aplicação na sua máquina:
+Requisitos: **Node.js 22.9 ou superior** e npm. Validado com Node.js 24.14.0. Use os comandos abaixo em um terminal Linux/macOS ou WSL:
 
 ```bash
-# Clone este repositório
-$ git clone git@github.com:pabloxt14/nlw-journey-node.git
-
-# Acesse a pasta do projeto no terminal
-$ cd nlw-journey-node
-
-# Instale as dependências
-$ npm install
-
-# Crie o arquivo '.env' e preencha as variáveis conforme o arquivo '.env.example'
-
-# Execute as migrations para criar as tabelas necessários no banco
-$ npx prisma migrate-dev
-
-# Execute a aplicação em modo de desenvolvimento
-$ npm run dev
-
-# A aplicação inciará na porta que você configurou no arquivo '.env'
+git clone https://github.com/Saiiru/Plann.er.git
+cd Plann.er
+npm ci
+cp .env.example .env
+npm run setup
+npm run dev
 ```
 
-## 🛠 Technologies
+A API escuta por padrão em `http://127.0.0.1:3333`. O navegador deve usar a origem definida em `CORS_ORIGIN`, inicialmente `http://localhost:3000`. O frontend é um projeto separado; esta API não inclui interface web. Os redirecionamentos apontam para `WEB_BASE_URL` mesmo se o frontend não estiver em execução.
 
-As seguintes principais ferramentas foram usadas na construção do projeto:
+O comando `setup` gera o Prisma Client e aplica as migrations versionadas. O banco local `prisma/dev.db` é criado durante esse processo; nenhum banco preenchido é distribuído no repositório. `DATABASE_URL="file:./dev.db"` é relativo ao diretório do schema Prisma.
 
--   **[TypeScript](https://www.typescriptlang.org/)**
--   **[Fastify](https://fastify.dev/)**
--   **[Prisma](https://www.prisma.io/)**
--   **[Zod](https://zod.dev/)**
--   **[Nodemailer](https://nodemailer.com/)**
--   **[DayJS](https://day.js.org/)**
+Para executar o JavaScript compilado:
 
-> Para mais detalhes das dependências gerais da aplicação veja o arquivo [package.json](./package.json)
+```bash
+npm run build
+npm start
+```
+
+`npm start` define `NODE_ENV=production` apenas no processo da aplicação, mesmo se o terminal tiver outro valor global. Isso seleciona o modo de execução; não significa que a API tenha os controles necessários para uso público.
+
+## Configuração
+
+Copie `.env.example` antes de executar o setup. O servidor carrega `.env` nos comandos `dev` e `start`; o Prisma também o usa em seus comandos.
+
+| Variável | Valor de exemplo | Finalidade |
+| --- | --- | --- |
+| `DATABASE_URL` | `file:./dev.db` | Banco SQLite local |
+| `API_BASE_URL` | `http://localhost:3333` | Base dos links de confirmação |
+| `WEB_BASE_URL` | `http://localhost:3000` | Destino dos redirecionamentos |
+| `CORS_ORIGIN` | `http://localhost:3000` | Origem exata do frontend, sem caminho nem barra final |
+| `HOST` | `127.0.0.1` | Interface de escuta local |
+| `PORT` | `3333` | Porta da API |
+| `MAIL_PREVIEW_DIR` | `.mail-preview` | Diretório de mensagens locais |
+
+URLs da API, frontend e links úteis precisam usar HTTP ou HTTPS. Arquivos `.env`, bancos SQLite, mensagens locais e arquivos compilados são ignorados pelo Git.
+
+## Confirmação sem enviar emails
+
+A configuração padrão **não envia emails nem acessa SMTP ou Ethereal**. Criação de viagem, confirmação da viagem e novos convites gravam mensagens em JSON em `.mail-preview/`. Cada arquivo contém destinatário, `link` de confirmação e HTML escapado. Abra o JSON e use o campo `link` para continuar o fluxo local.
+
+1. Crie uma viagem com `POST /trips` e guarde `tripId`.
+2. Acesse `GET /trips/:tripId/confirm` usando o link da mensagem do organizador. A viagem é confirmada e as mensagens dos convidados são criadas.
+3. Acesse `GET /participants/:participantId/confirm` usando o link de cada mensagem de convite.
+4. Consulte e registre atividades, links e novos convites nas rotas abaixo.
+
+O organizador já é criado como participante confirmado. Convidados não podem confirmar participação antes da confirmação da viagem. A API não possui uma etapa para preencher o nome do convidado: ele permanece `null`, conforme o modelo original.
+
+Falhas ao gravar mensagens revertem a escrita da respectiva operação no banco. A confirmação repetida da viagem não recria convites. As mensagens locais não são uma fila transacional: em caso de falha parcial, arquivos já gravados podem permanecer, e uma nova tentativa pode criar outra prévia. Não há entrega de emails em produção implementada.
+
+## Rotas
+
+| Método | Caminho | Resultado |
+| --- | --- | --- |
+| POST | `/trips` | Cria viagem e retorna `{ "tripId": "..." }` (200) |
+| GET | `/trips/:tripId` | Detalhes em `{ "trip": { ... } }` |
+| PUT | `/trips/:tripId` | Altera destino e datas; retorna `tripId` |
+| GET | `/trips/:tripId/confirm` | Confirma viagem e redireciona (302) |
+| GET | `/trips/:tripId/participants` | Lista participantes |
+| POST | `/trips/:tripId/invites` | Cria convite; retorna `participantId` (201) |
+| GET | `/participants/:participantId` | Detalhes do participante |
+| GET | `/participants/:participantId/confirm` | Confirma participação e redireciona (302) |
+| POST | `/trips/:tripId/activities` | Cria atividade; retorna `activityId` (201) |
+| GET | `/trips/:tripId/activities` | Atividades agrupadas por dia UTC, incluindo dias vazios |
+| POST | `/trips/:tripId/links` | Cria link; retorna `linkId` (201) |
+| GET | `/trips/:tripId/links` | Lista links |
+
+Exemplo de corpo para `POST /trips` — substitua as datas por datas futuras:
+
+```json
+{
+  "destination": "São Paulo",
+  "starts_at": "2099-08-01T18:00:00-03:00",
+  "ends_at": "2099-08-04T18:00:00-03:00",
+  "owner_name": "Pessoa de exemplo",
+  "owner_email": "owner@example.test",
+  "emails_to_invite": ["guest@example.test"]
+}
+```
+
+`PUT /trips/:tripId` recebe `destination`, `starts_at` e `ends_at`. Datas devem ser strings ISO 8601 completas com fuso (`Z` ou deslocamento), início no futuro e término igual ou posterior ao início. A duração máxima é 366 dias. As respostas usam UTC. Alterações que excluiriam atividades existentes retornam 409.
+
+Para atividades, envie `{ "title": "Passeio no centro", "occurs_at": "2099-08-02T10:00:00-03:00" }`. O instante deve estar entre o início e o término da viagem, inclusive. Os dias do agrupamento usam meia-noite UTC, independentemente do fuso do computador.
+
+Para links, envie `{ "title": "Reserva do hotel", "url": "https://example.test/reserva" }`. Para convites, envie `{ "email": "new@example.test" }`. Emails são normalizados para minúsculas e cada endereço só pode aparecer uma vez por viagem. O organizador não é duplicado se aparecer na lista de convidados.
+
+IDs malformados ou entradas inválidas retornam 400; recursos ausentes retornam 404; conflitos de convite ou datas retornam 409. Erros inesperados retornam 500 sem expor detalhes internos.
+
+## Verificar
+
+```bash
+npm run typecheck
+npm test
+npm run build
+npm audit
+```
+
+Os testes criam um banco SQLite temporário, aplicam as migrations reais e usam `Fastify.inject`. Cobrem o fluxo completo, datas inválidas e limites, último dia de viagens parciais, recursos ausentes, duplicação de convites, isolamento das consultas por viagem, conflitos de alteração, falhas das prévias, HTML escapado, links HTTP(S), JSON inválido e CORS. Não usam seu banco local, não abrem portas e não enviam emails.
+
+Para validar o agrupamento em outro fuso:
+
+```bash
+TZ=America/Sao_Paulo npm test
+```
+
+## Limites do projeto
+
+Esta é uma demonstração local. **Não há autenticação nem autorização por usuário**: quem conhece um ID pode consultar ou alterar o recurso correspondente, inclusive confirmar viagens e participantes. Os links usam IDs diretamente, sem token assinado ou expiração; confirmações também alteram estado por GET. CORS não é controle de acesso. Não publique esta API com dados pessoais ou acesso público sem implementar esses controles, limites de requisição e uma estratégia de entrega de mensagens.
+
+A migration de unicidade normaliza emails existentes e mescla duplicatas por viagem, preservando primeiro o organizador, depois o participante confirmado e depois o menor ID. Faça backup de qualquer banco anterior antes de migrar; o banco de demonstração antigo foi removido do versionamento.
+
+Tecnologias: TypeScript, Fastify 5, Zod 4, Prisma 5 e SQLite. Agradecimento à Rocketseat pelo conteúdo original do NLW Journey.
