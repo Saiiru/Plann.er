@@ -35,3 +35,14 @@ Trilha NLW Journey da Rocketseat. Créditos, fontes de tutoriais e colaboradores
 **Ainda não é:** sistema integrado à KORA, serviço em produção ou prova de maturidade sem testes.
 
 [Voltar ao portfólio SAIRU/BLACKSITE](https://saiiru.github.io/#projetos-independentes)
+
+
+## Verificação de funcionamento — 12/11/2026
+
+**Estado confirmado:** API validada localmente
+
+**Evidência:** Node 24 · npm test: 22/22; npm run typecheck; npm run build
+
+**Limites e bloqueios:** Hospedagem pública bloqueada por SQLite local sem armazenamento persistente e ausência de autenticação para rotas de escrita.
+
+Esta validação não implica integração à KORA nem certificação de produção. Não alterar histórico, licença e autoria dos tutoriais.
