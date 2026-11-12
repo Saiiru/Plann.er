@@ -18,6 +18,7 @@ import { getParticipant } from "./routes/get-participant";
 import { getParticipants } from "./routes/get-participants";
 import { getTripDetails } from "./routes/get-trip-details";
 import { updateTrip } from "./routes/update-trip";
+import { health } from "./routes/health";
 
 declare module "fastify" {
     interface FastifyInstance {
@@ -45,6 +46,7 @@ export function buildApp(options: { prisma?: PrismaClient; mail?: MailClient; lo
 
     app.setErrorHandler(errorHandler);
 
+    app.register(health);
     app.register(createTrip);
     app.register(confirmTrip);
     app.register(confirmParticipant);

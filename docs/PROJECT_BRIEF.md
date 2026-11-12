@@ -46,3 +46,14 @@ Trilha NLW Journey da Rocketseat. Créditos, fontes de tutoriais e colaboradores
 **Limites e bloqueios:** Hospedagem pública bloqueada por SQLite local sem armazenamento persistente e ausência de autenticação para rotas de escrita.
 
 Esta validação não implica integração à KORA nem certificação de produção. Não alterar histórico, licença e autoria dos tutoriais.
+
+
+## Corte de execução Docker — 12/11/2026
+
+- Healthcheck: `GET /health` consulta a tabela Trip via Prisma; 200 quando o schema está pronto, 503 caso contrário.
+- Dockerfile multi-stage com Node 22 e OpenSSL; Compose publica apenas em `127.0.0.1`, sem expor serviço público.
+- Migrations são aplicadas no início do container; volume persistente armazena SQLite e prévias locais de e-mail.
+- Build Docker validado; POST criou viagem fictícia e GET recuperou após reinício do container. O serviço de teste foi parado.
+- 23 testes de integração, compilação TypeScript e build aprovados.
+- Guia de leitura e laboratório: `docs/LOCAL_DEPLOY_AND_STUDY.md`.
+- PENDENTE: autenticação/controle de acesso, armazenamento gerenciado para execução serverless e frontend próprio. Não afirmar backend remoto publicado.
