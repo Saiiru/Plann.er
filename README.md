@@ -19,8 +19,8 @@ API educacional de planejamento de viagens, baseada no **NLW Journey**, da Rocke
 Requisitos: **Node.js 22.9 ou superior** e npm. Validado com Node.js 24.14.0. Use os comandos abaixo em um terminal Linux/macOS ou WSL:
 
 ```bash
-git clone https://github.com/Saiiru/Plann.er.git
-cd Plann.er
+git clone https://github.com/Saiiru/travel-planner-api.git
+cd travel-planner-api
 npm ci
 cp .env.example .env
 npm run setup
@@ -131,3 +131,10 @@ Esta é uma demonstração local. **Não há autenticação nem autorização po
 A migration de unicidade normaliza emails existentes e mescla duplicatas por viagem, preservando primeiro o organizador, depois o participante confirmado e depois o menor ID. Faça backup de qualquer banco anterior antes de migrar; o banco de demonstração antigo foi removido do versionamento.
 
 Tecnologias: TypeScript, Fastify 5, Zod 4, Prisma 5 e SQLite. Agradecimento à Rocketseat pelo conteúdo original do NLW Journey.
+
+
+## Verificação do código em 12/11/2026
+
+Node 24 · npm test: 22/22; npm run typecheck; npm run build
+
+**Limitações:** Hospedagem pública bloqueada por SQLite local sem armazenamento persistente e ausência de autenticação para rotas de escrita.
