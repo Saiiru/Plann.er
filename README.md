@@ -1,3 +1,15 @@
+# Travel Planner API
+
+**Objetivo:** Organizar viagens em grupo por API, incluindo participantes, atividades, links e confirmações.
+
+**Estado:** API educacional; testes de integração identificados. Sem frontend ou autenticação.
+
+**Documentação técnica, origem e próximos passos:** [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md)
+
+---
+
+## Material original preservado
+
 # Plann.er API
 
 API educacional de planejamento de viagens, baseada no **NLW Journey**, da Rocketseat. Permite criar e confirmar viagens, confirmar participantes, registrar atividades e guardar links. Projeto de portfólio com execução local e testes de integração reais com SQLite.
