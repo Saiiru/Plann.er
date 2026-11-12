@@ -2,7 +2,7 @@
 
 **Objetivo:** Organizar viagens em grupo por API, incluindo participantes, atividades, links e confirmações.
 
-**Estado:** API educacional; testes de integração identificados. Sem frontend ou autenticação.
+**Estado:** API educacional; 23 testes de integração aprovados e execução Docker local com persistência verificada. Sem frontend ou autenticação pública.
 
 **Documentação técnica, origem e próximos passos:** [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md)
 
@@ -132,6 +132,22 @@ A migration de unicidade normaliza emails existentes e mescla duplicatas por via
 
 Tecnologias: TypeScript, Fastify 5, Zod 4, Prisma 5 e SQLite. Agradecimento à Rocketseat pelo conteúdo original do NLW Journey.
 
+
+## Docker local com banco persistente (verificado em 12/11/2026)
+
+O projeto inclui agora `Dockerfile`, `compose.yaml` e a rota `GET /health`. O container aplica migrations Prisma na inicialização e guarda SQLite e prévias de convite em um volume nomeado. O Compose publica exclusivamente no loopback `127.0.0.1` (não expõe uma API pública).
+
+Experimento executado no Arch: imagem construída com sucesso; `/health` retornou HTTP 200; `POST /trips` criou uma viagem fictícia; após `docker compose restart`, `GET /trips/:tripId` recuperou a mesma viagem do volume. O container de teste foi parado depois da verificação.
+
+**[Tutorial técnico e laboratório completo](docs/LOCAL_DEPLOY_AND_STUDY.md)** — arquitetura, comandos, contrato HTTP, segurança, testes e exercícios para ler e entender o código.
+
+```bash
+TRAVEL_DEMO_PORT=4357 docker compose -p sairu-travel-study up -d --build
+curl -fsS http://127.0.0.1:4357/health
+TRAVEL_DEMO_PORT=4357 docker compose -p sairu-travel-study down
+```
+
+**Importante:** não implante a API na Internet sem autenticação/autorização. SQLite em volume é durável no host Docker, mas não é adequado para Vercel Functions efêmeras; é necessário projetar um banco persistente e política de acesso numa etapa separada.
 
 ## Verificação do código em 12/11/2026
 

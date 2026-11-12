@@ -1,0 +1,29 @@
+# Local-only Docker Compose demonstration. No external network exposure.
+services:
+  api:
+    build: .
+    ports:
+      - "127.0.0.1:${TRAVEL_DEMO_PORT:-3333}:3333"
+    environment:
+      DATABASE_URL: "file:../data/trips.db"
+      API_BASE_URL: "http://127.0.0.1:${TRAVEL_DEMO_PORT:-3333}"
+      WEB_BASE_URL: "http://127.0.0.1:5173"
+      CORS_ORIGIN: "http://127.0.0.1:5173"
+      MAIL_PREVIEW_DIR: "/app/data/mail-preview"
+      HOST: "0.0.0.0"
+      PORT: "3333"
+    volumes:
+      - trip_data:/app/data
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3333/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 3s
+      retries: 4
+      start_period: 15s
+
+volumes:
+  trip_data:

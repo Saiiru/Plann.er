@@ -72,6 +72,13 @@ after(async () => {
     rmSync(directory, { recursive: true, force: true });
 });
 
+test("health readiness verifies migrated database without exposing credentials", async () => {
+    const result = await app.inject({ method: "GET", url: "/health" });
+    assert.equal(result.statusCode, 200);
+    assert.deepEqual(result.json(), { status: "ok", service: "travel-planner-api" });
+    assert.equal(result.headers["content-type"], "application/json; charset=utf-8");
+});
+
 test("complete trip, participant, activity, link, invitation and update flow", async () => {
     const tripId = await create();
     assert.equal(messages.length, 1);
